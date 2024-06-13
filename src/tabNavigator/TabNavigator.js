@@ -6,6 +6,7 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import Productos from '../screens/Productos';
 import Home from '../screens/Home';
 import Carrito from '../screens/Carrito';
+import Crud from './crudNavigator';
 
 const Tab = createBottomTabNavigator();
 
@@ -34,6 +35,11 @@ const TabNavigator = () => {
             name="Home"
             component={Home}
             options={{ title: 'Inicio' }}
+          />
+          <Tab.Screen
+            name="Crud"
+            component={Crud}
+            options={{ title: 'Carrito' }}
           />
           <Tab.Screen
             name="Productos"
