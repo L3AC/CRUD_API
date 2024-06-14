@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image } from 'react-native';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
 import Input from '../components/Inputs/Input';
 import Buttons from '../components/Buttons/Button';
 import * as Constantes from '../utils/constantes';
@@ -38,7 +38,6 @@ const App = () => {
         body: formData
       });
       const data = await response.json();
-      console.log(data);
       if (data.status) {
         setView('list');
         refreshList();
@@ -116,7 +115,15 @@ const App = () => {
       });
       const data = await response.json();
       if (data.status) {
-        setForm(data.dataset);
+        setForm({
+          idAdministrador: data.dataset.id_administrador,
+          nombreAdministrador: data.dataset.nombre_administrador,
+          apellidoAdministrador: data.dataset.apellido_administrador,
+          correoAdministrador: data.dataset.correo_administrador,
+          aliasAdministrador: data.dataset.alias_administrador,
+          claveAdministrador: '',
+          confirmarClave: ''
+        });
         setView('edit');
       } else {
         Alert.alert('Error', data.error);
@@ -141,12 +148,14 @@ const App = () => {
               renderItem={({ item }) => (
                 <View style={styles.itemContainer}>
                   <Text style={styles.itemText}>{item.nombre_administrador} {item.apellido_administrador}</Text>
-                  <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
-                    <Text style={styles.buttonText}>Editar</Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
-                    <Text style={styles.buttonText}>Eliminar</Text>
-                  </TouchableOpacity>
+                  <View style={styles.buttonsContainer}>
+                    <TouchableOpacity onPress={() => handleEdit(item.id_administrador)} style={styles.button}>
+                      <Text style={styles.buttonText}>Editar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity onPress={() => handleDelete(item.id_administrador)} style={styles.button}>
+                      <Text style={styles.buttonText}>Eliminar</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               )}
             />
@@ -155,7 +164,7 @@ const App = () => {
       case 'create':
       case 'edit':
         return (
-          <View style={styles.container}>
+          <ScrollView contentContainerStyle={styles.container}>
             <Image source={require('../img/coffee-cup.png')} style={styles.image} />
             <Text style={styles.texto}>{view === 'create' ? 'Crear Administrador' : 'Editar Administrador'}</Text>
             <Input
@@ -198,7 +207,7 @@ const App = () => {
               textoBoton='Cancelar'
               accionBoton={() => setView('list')}
             />
-          </View>
+          </ScrollView>
         );
       default:
         return null;
@@ -218,17 +227,13 @@ const styles = StyleSheet.create({
     backgroundColor: '#EAD8C0',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 10,
   },
   texto: {
     color: '#322C2B',
     fontWeight: '900',
     fontSize: 20,
-  },
-  textRegistrar: {
-    color: '#322C2B',
-    fontWeight: '700',
-    fontSize: 18,
-    marginTop: 10,
+    marginVertical: 10,
   },
   image: {
     width: 75,
@@ -248,10 +253,15 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 2,
     elevation: 2,
+    width: '100%',
   },
   itemText: {
     color: '#322C2B',
     fontSize: 16,
+    flex: 1,
+  },
+  buttonsContainer: {
+    flexDirection: 'row',
   },
   button: {
     backgroundColor: '#322C2B',
