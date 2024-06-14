@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert, Image, ScrollView } from 'react-native';
+import { View, Text, Image, TouchableOpacity, Alert, FlatList, ScrollView, StyleSheet } from 'react-native';
 import Input from '../components/Inputs/Input';
 import Buttons from '../components/Buttons/Button';
 import * as Constantes from '../utils/constantes';
@@ -18,11 +18,27 @@ const App = () => {
     confirmarClave: ''
   });
 
+  const initialFormState = {
+    idAdministrador: '',
+    nombreAdministrador: '',
+    apellidoAdministrador: '',
+    correoAdministrador: '',
+    aliasAdministrador: '',
+    claveAdministrador: '',
+    confirmarClave: ''
+  };
+
   useEffect(() => {
     fetch(`${ip}/coffeeshop/api/services/admin/administrador.php?action=readAll`)
       .then(response => response.json())
       .then(data => setAdministrators(data.dataset));
   }, []);
+
+  useEffect(() => {
+    if (view === 'create') {
+      setForm(initialFormState);
+    }
+  }, [view]);
 
   const handleCreate = async () => {
     const formData = new FormData();
@@ -138,7 +154,7 @@ const App = () => {
     switch (view) {
       case 'list':
         return (
-          <View style={styles.container}>
+          <View style={styles.listContainer}>
             <Image source={require('../img/coffee-cup.png')} style={styles.image} />
             <Text style={styles.texto}>Administradores</Text>
             <Buttons textoBoton="Agregar Administrador" accionBoton={() => setView('create')} />
@@ -164,7 +180,7 @@ const App = () => {
       case 'create':
       case 'edit':
         return (
-          <ScrollView contentContainerStyle={styles.container}>
+          <ScrollView contentContainerStyle={styles.formContainer}>
             <Image source={require('../img/coffee-cup.png')} style={styles.image} />
             <Text style={styles.texto}>{view === 'create' ? 'Crear Administrador' : 'Editar Administrador'}</Text>
             <Input
@@ -225,9 +241,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#EAD8C0',
-    alignItems: 'center',
-    justifyContent: 'center',
     padding: 10,
+  },
+  listContainer: {
+    flex: 1,
+    alignItems: 'center',
+  },
+  formContainer: {
+    alignItems: 'center',
   },
   texto: {
     color: '#322C2B',
@@ -248,23 +269,17 @@ const styles = StyleSheet.create({
     marginVertical: 5,
     backgroundColor: '#fff',
     borderRadius: 5,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.2,
-    shadowRadius: 2,
-    elevation: 2,
     width: '100%',
   },
   itemText: {
     color: '#322C2B',
     fontSize: 16,
-    flex: 1,
   },
   buttonsContainer: {
     flexDirection: 'row',
   },
   button: {
-    backgroundColor: '#322C2B',
+    backgroundColor: '#6f4e37',
     padding: 10,
     borderRadius: 5,
     marginHorizontal: 5,
